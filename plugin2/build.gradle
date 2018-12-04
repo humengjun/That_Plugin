@@ -1,0 +1,70 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+
+
+
+    defaultConfig {
+        applicationId "com.hmj.demo.plugin2"
+        minSdkVersion 23
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+        applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def fileName = "plugin2.apk"
+            def outFile = output.outputFile
+            if (outFile != null && outFile.name.endsWith('.apk')) {
+                outputFileName = fileName  //  output.outputFile 改为 outputFileName
+            }
+            println("$buildDir/outputs/apk/")
+            println("$rootDir/HostApp/src/main/assets")
+
+            copy {
+                from "$buildDir/outputs/apk/release/plugin2.apk"
+                into "$rootDir/HostApp/src/main/assets"
+            }
+        }
+    }
+
+//    assemble.doLast {
+//        android.applicationVariants.all { variant ->
+//            // Copy Release artifact to HostApp's assets and rename
+//            if (variant.name == "release") {
+//                variant.outputs.each { output ->
+//                    File originFile = output.outputFile
+//                    println originFile.absolutePath
+//                    copy {
+//                        from originFile
+//                        into "$rootDir/HostApp/src/main/assets"
+//                        rename(originFile.name, "plugin2.apk")
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation project(':sharelibrary')
+}
